@@ -1,0 +1,26 @@
+{
+    "name": "yiibr/yii2-correios",
+    "description": "Locates an address in Brazil by postal code",
+    "keywords": ["yii2", "extension", "correios"],
+    "homepage": "https://github.com/yiibr/yii2-correios",
+    "type": "yii2-extension",
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "Wanderson Bragança",
+            "email": "wanderson.wbc@gmail.com",
+            "homepage": "https://github.com/wbraganca"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/yiibr/yii2-correios/issues?state=open",
+        "source": "https://github.com/yiibr/yii2-correios"
+    },
+    "require": {
+        "yiisoft/yii2": "dev-master",
+        "yiisoft/yii2-bootstrap": "dev-master"
+    },
+    "autoload": {
+        "psr-4": { "yiibr\\correios\\": "" }
+    }
+}
