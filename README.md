@@ -58,7 +58,7 @@ use yiibr\correios\CepInput;
 
 // Example:
 
-<?= $form->field($model, 'cep',)->widget('app\components\cep\CepInput', [
+<?= $form->field($model, 'cep',)->widget('yiibr\correios\CepInput', [
     'action' => ['addressSearch'],
     'fields' => [
         'location' => 'address-location',
