@@ -141,18 +141,19 @@ class CepInput extends InputWidget
         $url = Url::to($this->action);
 
         $js = <<<JS
-var cep = new Cep({
-    widget: '#{$this->id}',
+var {$this->id} = jQuery('#{$this->id}');
+var {$this->id}_cep = new Cep({
+    widget: {$this->id},
     action: '{$url}',
     fields: {$fields}
 });
 
-jQuery('#{$this->id}').find('span a:first').on('click', function(){
-    cep.search($(this), true);
+{$this->id}.find('span a:first').on('click', function(){
+    {$this->id}_cep.search($(this), true);
 });
 
-jQuery('#{$this->id}').parent().find('.modal span a:first').on('click', function(){
-    cep.search($(this), false);
+{$this->id}.parent().find('.modal span a:first').on('click', function(){
+    {$this->id}_cep.search($(this), false);
 });
 JS;
         $this->getView()->registerJs($js);

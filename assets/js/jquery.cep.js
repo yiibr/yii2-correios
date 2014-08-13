@@ -5,7 +5,7 @@ var Cep = function(options) {
 Cep.prototype = {
 
     init: function(options) {
-        this.$widget = $(options.widget);
+        this.$widget = options.widget;
         this.$window = this.$widget.parent().find('.modal');
         this.action = options.action;
         this.fields = options.fields;
