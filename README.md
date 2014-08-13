@@ -43,7 +43,7 @@ use yiibr\correios\CepInput;
 ...
 
 <?php CepInput::widget([
-    'action' => ['/base/cliente/cep'],
+    'action' => ['addressSearch'],
     'fields' => [
         'location' => 'location_input_id',
         'district' => 'district_input_id',
