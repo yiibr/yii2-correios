@@ -1,7 +1,7 @@
 yii2-correios
 =============
 
-This extension allows automatic completion of Brazilian Address by postal code.
+This extension allows automatic completion and search Brazilian address.
 
 
 ### Installation
@@ -23,7 +23,7 @@ public function actions()
 {
     return [
         ...
-        'addressSearch' => 'yiibr\correios\actions\AddressSearchByCepAction'
+        'addressSearch' => 'yiibr\correios\CepAction'
         ...
     ];
 }
@@ -35,23 +35,21 @@ public function actions()
 On your view file.
 
 ```php
+
 <?php
-use yiibr\correios\AddressSearchByCepWidget;
+use yiibr\correios\CepInput;
 ?>
 
 ...
 
-<?php AddressSearchByCepWidget::widget([
-    'target' => '#btnSearchAddress',
-    'model' => $model,
-    'attribute' => 'postcode',
-    'action' => 'yourController/addressSearch',
-    'config' => [
-        'location' => 'address',
-        'district' => 'district',
-        'city' => 'city',
-        'state' => 'state',
-    ]
+<?php CepInput::widget([
+    'action' => ['/base/cliente/cep'],
+    'fields' => [
+        'location' => 'location_input_id',
+        'district' => 'district_input_id',
+        'city' => 'city_input_id',
+        'state' => 'state_input_id'
+    ],
 ]); ?>
 
 ```
@@ -60,20 +58,18 @@ use yiibr\correios\AddressSearchByCepWidget;
 
 // Example:
 
-<div class="row">
-    <div class="col-lg-5">
-        <?php $form = ActiveForm::begin(['id' => 'address-form']); ?>
-            <?= $form->field($model, 'postcode') ?>
-            <?= Html::Button('Search Address', [
-                'class' => 'btn btn-primary', 
-                'id' => 'btnSearchAddress',
-                'data-loading-text' => 'Loadding...',
-            ]) ?>
-            <?= $form->field($model, 'address') ?>
-            <?= $form->field($model, 'district') ?>
-            <?= $form->field($model, 'city') ?>
-            <?= $form->field($model, 'state') ?>
-        <?php ActiveForm::end(); ?>
-    </div>
-</div>
+<?= $form->field($model, 'cep',)->widget('app\components\cep\CepInput', [
+    'action' => ['addressSearch'],
+    'fields' => [
+        'location' => 'address-location',
+        'district' => 'address-district',
+        'city' => 'address-city',
+        'state' => 'address-state',
+    ],
+]) ?>
+
+<?= $form->field($model, 'location')->textInput() ?>
+<?= $form->field($model, 'district')->textInput() ?>
+<?= $form->field($model, 'city')->textInput() ?>
+<?= $form->field($model, 'state')->textInput() ?>
 ```
