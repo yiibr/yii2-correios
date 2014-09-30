@@ -16,7 +16,6 @@
         "issues": "https://github.com/yiibr/yii2-correios/issues?state=open",
         "source": "https://github.com/yiibr/yii2-correios"
     },
-    "minimum-stability": "dev",
     "require": {
         "yiisoft/yii2": "*"
     },
