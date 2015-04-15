@@ -9,7 +9,7 @@ use yii\web\NotFoundHttpException;
 
 class CepAction extends \yii\base\Action
 {
-    const URL_CORREIOS_MOBILE = 'http://m.correios.com.br/movel/buscaCepConfirma.do?tipoCep=&cepTemp=&metodo=buscarCep&cepEntrada=';
+    const URL_CORREIOS = 'http://www.buscacep.correios.com.br/servicos/dnec/consultaEnderecoAction.do';
 
     /**
      * Searches address by cep or location
@@ -19,75 +19,59 @@ class CepAction extends \yii\base\Action
     public function run($q)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (!$q) {
-            return [];
-        }
-        return $this->searchMobile($q);
+        return $q ? $this->search($q) : [];
     }
 
     /**
      * Processes html content, returning cep data
      * @param string $q query
      * @return array cep data
-     * @throws \yii\web\NotFoundHttpException
      */
-    public function searchMobile($q)
+    protected function search($q)
     {
         $result = [];
-        $html = file_get_contents(self::URL_CORREIOS_MOBILE . $q);
-        $html = preg_replace('/\n|\r|\t/', '', utf8_encode($html));
+        $fields = http_build_query([
+            'relaxation' => $q,
+            'semelhante' => 'S',
+            'TipoCep' => 'ALL',
+            'Metodo' => 'listaLogradouro',
+            'TipoConsulta' => 'relaxation'
+        ]);
 
-        if (preg_match('/class=\"erro\"/', $html)){
-            throw new NotFoundHttpException('Address not found');
-        }
+        $curl = curl_init(self::URL_CORREIOS);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $fields);
 
-        preg_match_all('/<div class=\"caixacampo\w+\">.*?<\/div>/', $html, $rows);
+        $response = curl_exec($curl);
+        curl_close($curl);
 
-        foreach ($rows as $r) {
-            foreach ($r as $content) {
-                preg_match_all('/<span class=\"respostadestaque\">(.*?)<\/span>/', $content, $matches);
-                $data = isset($matches[1]) ? $matches[1] : null;
-
-                if ($data) {
-                    $address = [];
-
-                    if (count($data) >= 4) {
-                        foreach ($data as $i => $item) {
-                            switch ($i) {
-                                case 0:
-                                    $address['location'] = trim($item);
-                                    break;
-                                case 1:
-                                    $address['district'] = trim($item);
-                                    break;
-                                case 2:
-                                    list($city, $state) = array_map('trim', explode('/', $item));
-                                    $address['city'] = $city;
-                                    $address['state'] = $state;
-                                    break;
-                                case 3:
-                                    $address['cep'] = trim($item);
-                                    break;
-                            }
-                        }
-                    } else if (count($data) === 2) {
-                        foreach ($data as $i => $item) {
-                            switch ($i) {
-                                case 0:
-                                    list($city, $state) = array_map('trim', explode('/', $item));
-                                    $address['city'] = $city;
-                                    $address['state'] = $state;
-                                    break;
-                                case 1:
-                                    $address['cep'] = trim($item);
-                                    break;
-                            }
-                        }
-                    }
-                    $result[] = $address;
+        if (preg_match_all('/\<td.*?\>(.*?)\<\/td\>/i', utf8_encode($response), $matches)){
+            $i = 0;
+            $address = [];
+            foreach ($matches[1] as $value) {
+                switch ($i) {
+                    case 0:
+                        $address['location'] = $value;
+                        break;
+                    case 1:
+                        $address['district'] = $value;
+                        break;
+                    case 2:
+                        $address['city'] = $value;
+                        break;
+                    case 3:
+                        $address['state'] = $value;
+                        break;
+                    default:
+                        $address['cep'] = $value;
+                        $result[] = $address;
+                        $address = [];
+                        $i = -1;
                 }
+                $i++;
             }
         }
         return $result;
     }
-} 
+}

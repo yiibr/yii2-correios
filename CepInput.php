@@ -83,7 +83,7 @@ class CepInput extends InputWidget
     protected function renderModal()
     {
         echo Html::beginTag('div', ['class' => 'fade modal', 'role' => 'dialog', 'tabindex' => '-1']);
-        echo Html::beginTag('div', ['class' => 'modal-dialog']);
+        echo Html::beginTag('div', ['class' => 'modal-dialog modal-lg']);
         echo Html::beginTag('div', ['class' => 'modal-content']);
 
         echo Html::beginTag('div', ['class' => 'modal-header']);
