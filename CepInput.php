@@ -3,6 +3,7 @@
 namespace yiibr\correios;
 
 use yii\helpers\Html;
+use yii\helpers\Inflector;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\widgets\InputWidget;
@@ -27,10 +28,10 @@ class CepInput extends InputWidget
      * ```
      */
     public $fields = [
-        'location'=>'',
-        'district'=>'',
-        'city'=>'',
-        'state'=>'',
+        'location' => '',
+        'district' => '',
+        'city' => '',
+        'state' => '',
     ];
 
     /**
@@ -139,24 +140,8 @@ class CepInput extends InputWidget
     {
         $fields = Json::encode($this->fields);
         $url = Url::to($this->action);
-
-        $js = <<<JS
-var {$this->id} = jQuery('#{$this->id}');
-var {$this->id}_cep = new Cep({
-    widget: {$this->id},
-    action: '{$url}',
-    fields: {$fields}
-});
-
-{$this->id}.find('span a:first').on('click', function(){
-    {$this->id}_cep.search($(this), true);
-});
-
-{$this->id}.parent().find('.modal span a:first').on('click', function(){
-    {$this->id}_cep.search($(this), false);
-});
-JS;
-        $this->getView()->registerJs($js);
+        $id = $this->options['id'];
+        $this->getView()->registerJs("jQuery('#{$id}').cep({widget: jQuery('#$this->id'), action: '$url',fields: $fields});");
     }
 
 } 
