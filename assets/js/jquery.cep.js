@@ -12,13 +12,15 @@ Cep.prototype = {
     },
 
     _assign: function(data) {
-        for (var prop in this.fields) {
-            var $input = jQuery('#' + this.fields[prop]);
-            if ($input.length) {
-                if (prop in data) {
-                    $input.val(data[prop]);
-                } else {
-                    $input.val('');
+        if (!$.isEmptyObject(data)) {
+            for (var prop in this.fields) {
+                var $input = jQuery('#' + this.fields[prop]);
+                if ($input.length) {
+                    if (prop in data) {
+                        $input.val(data[prop]);
+                    } else {
+                        $input.val('');
+                    }
                 }
             }
         }
@@ -65,7 +67,8 @@ Cep.prototype = {
             val = val.replace(/[^0-9]/g,'');
         }
 
-        $.get(this.action + '&q=' + val ,function( data ) {
+        var sep = (this.action.indexOf('?') != -1  ? '&' : '?');
+        $.get(this.action + sep + 'q=' + val ,function( data ) {
             if (cep) {
                 that._assign(data[0]);
             } else {
