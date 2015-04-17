@@ -12,6 +12,29 @@ class CepAction extends \yii\base\Action
     const URL_CORREIOS = 'http://www.buscacep.correios.com.br/servicos/dnec/consultaEnderecoAction.do';
 
     /**
+     * @var array data sent in request
+     */
+    public $formData = [];
+
+    /**
+     * @var string name of query parameter
+     */
+    public $queryParam = 'relaxation';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        $this->formData = array_merge([
+            'semelhante' => 'N',
+            'TipoCep' => 'ALL',
+            'Metodo' => 'listaLogradouro',
+            'TipoConsulta' => 'relaxation'
+        ], $this->formData);
+    }
+
+    /**
      * Searches address by cep or location
      * @param string $q query
      * @return array cep data
@@ -30,18 +53,12 @@ class CepAction extends \yii\base\Action
     protected function search($q)
     {
         $result = [];
-        $fields = http_build_query([
-            'relaxation' => $q,
-            'semelhante' => 'N',
-            'TipoCep' => 'ALL',
-            'Metodo' => 'listaLogradouro',
-            'TipoConsulta' => 'relaxation'
-        ]);
+        $fields = array_merge([$this->queryParam => $q], $this->formData);
 
         $curl = curl_init(self::URL_CORREIOS);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HEADER, 0);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($fields));
 
         $response = curl_exec($curl);
         curl_close($curl);
