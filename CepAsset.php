@@ -11,4 +11,8 @@ class CepAsset extends AssetBundle
     public $js = [
         'jquery.cep.js',
     ];
+
+    public $depends = [
+        'yii\web\JqueryAsset',
+    ];
 } 
