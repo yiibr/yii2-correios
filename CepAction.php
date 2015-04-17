@@ -4,7 +4,7 @@ namespace yiibr\correios;
 
 use Yii;
 use yii\web\Response;
-use yii\web\NotFoundHttpException;
+use DOMDocument;
 
 
 class CepAction extends \yii\base\Action
@@ -32,7 +32,7 @@ class CepAction extends \yii\base\Action
         $result = [];
         $fields = http_build_query([
             'relaxation' => $q,
-            'semelhante' => 'S',
+            'semelhante' => 'N',
             'TipoCep' => 'ALL',
             'Metodo' => 'listaLogradouro',
             'TipoConsulta' => 'relaxation'
@@ -46,32 +46,24 @@ class CepAction extends \yii\base\Action
         $response = curl_exec($curl);
         curl_close($curl);
 
-        if (preg_match_all('/\<td.*?\>(.*?)\<\/td\>/i', utf8_encode($response), $matches)){
-            $i = 0;
-            $address = [];
-            foreach ($matches[1] as $value) {
-                switch ($i) {
-                    case 0:
-                        $address['location'] = $value;
-                        break;
-                    case 1:
-                        $address['district'] = $value;
-                        break;
-                    case 2:
-                        $address['city'] = $value;
-                        break;
-                    case 3:
-                        $address['state'] = $value;
-                        break;
-                    default:
-                        $address['cep'] = $value;
-                        $result[] = $address;
-                        $address = [];
-                        $i = -1;
+        static $pattern = '/<table border="0" cellspacing="1" cellpadding="5" bgcolor="gray">(.*?)<\/table>/is';
+        if (preg_match($pattern, $response, $matches)) {
+            $html = new DOMDocument();
+            if ($html->loadHTML($matches[0])) {
+                $rows = $html->getElementsByTagName('tr');
+                foreach ($rows as $tr) {
+                    $cols = $tr->getElementsByTagName('td');
+                    $result[] = [
+                        'location' => $cols->item(0)->nodeValue,
+                        'district' => $cols->item(1)->nodeValue,
+                        'city' => $cols->item(2)->nodeValue,
+                        'state' => $cols->item(3)->nodeValue,
+                        'cep' => $cols->item(4)->nodeValue,
+                    ];
                 }
-                $i++;
             }
         }
         return $result;
     }
+
 }
