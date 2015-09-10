@@ -3,6 +3,7 @@
 namespace yiibr\correios;
 
 use Yii;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use DOMDocument;
 
@@ -36,13 +37,20 @@ class CepAction extends \yii\base\Action
 
     /**
      * Searches address by cep or location
-     * @param string $q query
      * @return array cep data
+     * @throws NotFoundHttpException
      */
-    public function run($q)
+    public function run()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return $q ? $this->search($q) : [];
+        $query = Yii::$app->request->get($this->queryParam);
+        $result = $this->search($query);
+
+        if (!$result){
+            throw new NotFoundHttpException("Endereço não encontrado");
+        }
+
+        return $result;
     }
 
     /**

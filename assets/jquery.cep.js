@@ -84,16 +84,18 @@
                 val = val.replace(/[^0-9]/g, '');
             }
 
-            var sep = (this.action.indexOf('?') == -1 ? '?' : '&');
-            $.get(this.action + sep + 'q=' + val, function (data) {
-                if (cep) {
-                    that._assign(data[0]);
-                } else {
-                    that._locate(data);
-                }
-            }).fail(function (xhr, status) {
-                alert('Endereço não encontrado!');
-            });
+            if (val) {
+                $.get(this.action, {q: val}, function (data) {
+                    if (cep) {
+                        that._assign(data[0]);
+                    } else {
+                        that._locate(data);
+                    }
+                }).fail(function (xhr, status, text) {
+                    var error = $.parseJSON(xhr.responseText);
+                    alert((error.hasOwnProperty('message') && error.message) ? error.message : text);
+                });
+            }
         }
     };
 
