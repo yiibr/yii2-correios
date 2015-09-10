@@ -16,6 +16,7 @@
             this.$window = this.$widget.parent().find('.modal');
             this.action = options.action;
             this.fields = options.fields;
+            this.queryParam = options.queryParam;
 
             var that = this;
             this.$widget.find('span a:first').on('click', function(){
@@ -70,6 +71,7 @@
         search: function ($button, cep) {
             var $input = $button.parent().parent().children('input:first'),
                 val = $input.val(),
+                params = {};
                 that = this;
 
             if (cep) {
@@ -85,7 +87,8 @@
             }
 
             if (val) {
-                $.get(this.action, {q: val}, function (data) {
+                params[that.queryParam] = val;
+                $.get(this.action, params, function (data) {
                     if (cep) {
                         that._assign(data[0]);
                     } else {

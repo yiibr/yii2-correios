@@ -3,9 +3,9 @@
 namespace yiibr\correios;
 
 use yii\helpers\Html;
-use yii\helpers\Inflector;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\widgets\InputWidget;
 
 class CepInput extends InputWidget
@@ -33,6 +33,11 @@ class CepInput extends InputWidget
         'city' => '',
         'state' => '',
     ];
+
+    /**
+     * @var string name of query parameter
+     */
+    public $queryParam = '__q';
 
     /**
      * @inheritdoc
@@ -138,10 +143,15 @@ class CepInput extends InputWidget
 
     protected function registerJs()
     {
-        $fields = Json::encode($this->fields);
-        $url = Url::to($this->action);
         $id = $this->options['id'];
-        $this->getView()->registerJs("jQuery('#{$id}').cep({widget: jQuery('#$this->id'), action: '$url',fields: $fields});");
+        $options = Json::encode([
+            'widget' => new JsExpression("jQuery('#$this->id')"),
+            'action' => Url::to($this->action),
+            'fields' => $this->fields,
+            'queryParam' => $this->queryParam
+        ]);
+
+        $this->getView()->registerJs("jQuery('#{$id}').cep($options);");
     }
 
 } 

@@ -20,7 +20,7 @@ class CepAction extends \yii\base\Action
     /**
      * @var string name of query parameter
      */
-    public $queryParam = 'relaxation';
+    public $queryParam = '__q';
 
     /**
      * @inheritdoc
@@ -61,7 +61,7 @@ class CepAction extends \yii\base\Action
     protected function search($q)
     {
         $result = [];
-        $fields = array_merge([$this->queryParam => $q], $this->formData);
+        $fields = array_merge([$this->formData['TipoConsulta'] => $q], $this->formData);
 
         $curl = curl_init(self::URL_CORREIOS);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
