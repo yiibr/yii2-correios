@@ -19,7 +19,7 @@ class CepInput extends InputWidget
     /**
      * @var string the css search icon class
      */
-    public $searchIconClass = 'glyphicons glyphicons-search';
+    public $searchIconClass = 'glyphicon glyphicon-search';
 
     /**
      * @var array $fields ID of html elements that will receive result of search
