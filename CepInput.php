@@ -17,6 +17,11 @@ class CepInput extends InputWidget
     public $action = '';
 
     /**
+     * @var string the css search icon class
+     */
+    public $searchIconClass = 'glyphicons glyphicons-search';
+
+    /**
      * @var array $fields ID of html elements that will receive result of search
      * ```php
      * [
@@ -77,7 +82,7 @@ class CepInput extends InputWidget
         echo $input;
         echo Html::beginTag("span", ['class' => 'input-group-btn']);
         echo Html::beginTag("a", ['class' => 'btn btn-default']);
-        echo Html::tag("i", null, ['class' => 'fa fa-search']);
+        echo Html::tag("i", null, ['class' => $this->searchIconClass]);
         echo Html::endTag("a");
         echo Html::endTag("span");
         echo Html::endTag("div");
