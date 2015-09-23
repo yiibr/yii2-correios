@@ -71,7 +71,7 @@
         search: function ($button, cep) {
             var $input = $button.parent().parent().children('input:first'),
                 val = $input.val(),
-                params = {};
+                params = {},
                 that = this;
 
             if (cep) {
