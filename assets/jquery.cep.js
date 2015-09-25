@@ -12,17 +12,16 @@
 
         init: function ($element, options) {
             this.$element = $element;
-            this.$widget = options.widget;
-            this.$window = this.$widget.parent().find('.modal');
+            this.$window = this.$element.parent().find('.modal');
             this.action = options.action;
             this.fields = options.fields;
             this.queryParam = options.queryParam;
 
             var that = this;
-            this.$widget.find('span a:first').on('click', function(){
+            this.$element.find('span a:first').on('click', function(){
                 that.search($(this), true);
             });
-            this.$widget.parent().find('.modal span a:first').on('click', function(){
+            this.$element.parent().find('.modal span a:first').on('click', function(){
                 that.search($(this), false);
             });
         },
@@ -63,7 +62,7 @@
             $tbody.find('a').on('click', function () {
                 var address = $(this).parent().parent().data('address');
                 that._assign(address);
-                that.$widget.find('input:first').val(address.cep);
+                that.$element.find('input:first').val(address.cep);
                 that.$window.modal('hide');
             });
         },
@@ -96,7 +95,7 @@
                     }
                 }).fail(function (xhr, status, text) {
                     var error = $.parseJSON(xhr.responseText);
-                    alert((error.hasOwnProperty('message') && error.message) ? error.message : text);
+                    window.alert((error.hasOwnProperty('message') && error.message) ? error.message : text);
                 });
             }
         }

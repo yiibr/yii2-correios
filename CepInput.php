@@ -5,7 +5,6 @@ namespace yiibr\correios;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use yii\web\JsExpression;
 use yii\widgets\InputWidget;
 
 class CepInput extends InputWidget
@@ -150,7 +149,6 @@ class CepInput extends InputWidget
     {
         $id = $this->options['id'];
         $options = Json::encode([
-            'widget' => new JsExpression("jQuery('#$this->id')"),
             'action' => Url::to($this->action),
             'fields' => $this->fields,
             'queryParam' => $this->queryParam
