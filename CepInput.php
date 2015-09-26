@@ -41,7 +41,7 @@ class CepInput extends InputWidget
     /**
      * @var string name of query parameter
      */
-    public $queryParam = '__q';
+    public $queryParam = '_cep';
 
     /**
      * @inheritdoc

@@ -20,7 +20,7 @@ class CepAction extends \yii\base\Action
     /**
      * @var string name of query parameter
      */
-    public $queryParam = '__q';
+    public $queryParam = '_cep';
 
     /**
      * @inheritdoc
