@@ -12,16 +12,17 @@
 
         init: function ($element, options) {
             this.$element = $element;
-            this.$window = this.$element.parent().find('.modal');
+            this.$root = this.$element.parent().parent();
+            this.$window = this.$root.find('.modal');
             this.action = options.action;
             this.fields = options.fields;
             this.queryParam = options.queryParam;
 
             var that = this;
-            this.$element.find('span a:first').on('click', function(){
+            this.$element.parent().find('span a:first').on('click', function(){
                 that.search($(this), true);
             });
-            this.$element.parent().find('.modal span a:first').on('click', function(){
+            this.$root.find('.modal span a:first').on('click', function(){
                 that.search($(this), false);
             });
         },
@@ -45,16 +46,16 @@
 
         _locate: function (data) {
             var $tbody = this.$window.find('tbody'),
-                that = this;
+              that = this;
 
             $tbody.empty();
             for (var i in data) {
                 var row = data[i];
                 var tr = $(
-                    '<tr>' +
-                    '<td><a href="#">' + row.cep + '</a></td><td>' + row.location + '</td><td>' + row.district + '</td>' +
-                    '<td>' + row.city + '</td><td>' + row.state + '</td>' +
-                    '</tr>'
+                  '<tr>' +
+                  '<td><a href="#">' + row.cep + '</a></td><td>' + row.location + '</td><td>' + row.district + '</td>' +
+                  '<td>' + row.city + '</td><td>' + row.state + '</td>' +
+                  '</tr>'
                 ).appendTo($tbody);
                 tr.data('address', row);
             }
@@ -68,10 +69,10 @@
         },
 
         search: function ($button, cep) {
-            var $input = $button.parent().parent().children('input:first'),
-                val = $input.val(),
-                params = {},
-                that = this;
+            var $input = cep ? this.$element : this.$window.find('input:first'),
+              val = $input.val(),
+              params = {},
+              that = this;
 
             if (cep) {
                 if (!val) {
@@ -104,7 +105,7 @@
     $.fn.cep = function(options){
         return this.each(function(){
             var $this = $(this),
-                data = $this.data('cep');
+              data = $this.data('cep');
 
             if (!data) {
                 $this.data('cep', new Cep($this, options));
