@@ -2,15 +2,16 @@
 
 namespace yiibr\correios;
 
+use DOMDocument;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use DOMDocument;
 
 
 class CepAction extends \yii\base\Action
+
 {
-    const URL_CORREIOS = 'http://www.buscacep.correios.com.br/servicos/dnec/consultaEnderecoAction.do';
+    const URL_CORREIOS = 'http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaCepEndereco.cfm';
 
     /**
      * @var array data sent in request
@@ -29,9 +30,8 @@ class CepAction extends \yii\base\Action
     {
         $this->formData = array_merge([
             'semelhante' => 'N',
-            'TipoCep' => 'ALL',
-            'Metodo' => 'listaLogradouro',
-            'TipoConsulta' => 'relaxation'
+            'tipoCEP' => 'ALL',
+            'tipoConsulta' => 'relaxation'
         ], $this->formData);
     }
 
@@ -46,7 +46,7 @@ class CepAction extends \yii\base\Action
         $query = Yii::$app->request->get($this->queryParam);
         $result = $this->search($query);
 
-        if (!$result){
+        if (!$result) {
             throw new NotFoundHttpException("Endereço não encontrado");
         }
 
@@ -61,7 +61,7 @@ class CepAction extends \yii\base\Action
     protected function search($q)
     {
         $result = [];
-        $fields = array_merge([$this->formData['TipoConsulta'] => $q], $this->formData);
+        $fields = array_merge([$this->formData['tipoConsulta'] => $q], $this->formData);
 
         $curl = curl_init(self::URL_CORREIOS);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -71,19 +71,25 @@ class CepAction extends \yii\base\Action
         $response = curl_exec($curl);
         curl_close($curl);
 
-        static $pattern = '/<table border="0" cellspacing="1" cellpadding="5" bgcolor="gray">(.*?)<\/table>/is';
+        static $pattern = '/<table class="tmptabela">(.*?)<\/table>/is';
         if (preg_match($pattern, $response, $matches)) {
             $html = new DOMDocument();
             if ($html->loadHTML($matches[0])) {
                 $rows = $html->getElementsByTagName('tr');
+
+                $header = $rows->item(0);
+                $header->parentNode->removeChild($header);
+
                 foreach ($rows as $tr) {
                     $cols = $tr->getElementsByTagName('td');
+                    list($city, $state) = explode('/', $cols->item(2)->nodeValue);
+
                     $result[] = [
                         'location' => $cols->item(0)->nodeValue,
                         'district' => $cols->item(1)->nodeValue,
-                        'city' => $cols->item(2)->nodeValue,
-                        'state' => $cols->item(3)->nodeValue,
-                        'cep' => $cols->item(4)->nodeValue,
+                        'city' => $city,
+                        'state' => $state,
+                        'cep' => $cols->item(3)->nodeValue,
                     ];
                 }
             }
