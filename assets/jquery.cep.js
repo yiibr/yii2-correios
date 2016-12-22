@@ -19,11 +19,18 @@
             this.queryParam = options.queryParam;
 
             var that = this;
+
             this.$element.parent().find('span a:first').on('click', function(){
                 that.search($(this), true);
             });
             this.$root.find('.modal span a:first').on('click', function(){
                 that.search($(this), false);
+            });
+            this.$window.find('input:first').on('keydown', function(e){
+                if (e.which == '13') {
+                    e.preventDefault();
+                    $(this).parent().find('span a:first').trigger('click');
+                }
             });
         },
 
@@ -46,16 +53,16 @@
 
         _locate: function (data) {
             var $tbody = this.$window.find('tbody'),
-              that = this;
+                that = this;
 
             $tbody.empty();
             for (var i in data) {
                 var row = data[i];
                 var tr = $(
-                  '<tr>' +
-                  '<td><a href="#">' + row.cep + '</a></td><td>' + row.location + '</td><td>' + row.district + '</td>' +
-                  '<td>' + row.city + '</td><td>' + row.state + '</td>' +
-                  '</tr>'
+                    '<tr>' +
+                    '<td><a href="#">' + row.cep + '</a></td><td>' + row.location + '</td><td>' + row.district + '</td>' +
+                    '<td>' + row.city + '</td><td>' + row.state + '</td>' +
+                    '</tr>'
                 ).appendTo($tbody);
                 tr.data('address', row);
             }
@@ -70,9 +77,9 @@
 
         search: function ($button, cep) {
             var $input = cep ? this.$element : this.$window.find('input:first'),
-              val = $input.val(),
-              params = {},
-              that = this;
+                val = $input.val(),
+                params = {},
+                that = this;
 
             if (cep) {
                 if (!val) {
@@ -105,7 +112,7 @@
     $.fn.cep = function(options){
         return this.each(function(){
             var $this = $(this),
-              data = $this.data('cep');
+                data = $this.data('cep');
 
             if (!data) {
                 $this.data('cep', new Cep($this, options));
