@@ -2,6 +2,7 @@
 
 namespace yiibr\correios;
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -14,6 +15,11 @@ class CepInput extends InputWidget
      * @var array|string $action the form action URL. This parameter will be processed by [[Url::to()]].
      */
     public $action = '';
+
+    /**
+     * @inheritdoc
+     */
+    public $options = ['class' => 'form-control'];
 
     /**
      * @var string the css search icon class
@@ -57,8 +63,6 @@ class CepInput extends InputWidget
      */
     public function run()
     {
-        Html::addCssClass($this->options, 'form-control');
-
         if ($this->hasModel()) {
             $input = Html::activeTextInput($this->model, $this->attribute, $this->options);
         } else {
@@ -77,7 +81,7 @@ class CepInput extends InputWidget
      */
     protected function renderSearch($input, $id = null)
     {
-        echo Html::beginTag("div", ['class' => 'input-group', 'id' => $id]);
+        echo Html::beginTag("div", ['class' => 'input-group cep-search', 'id' => $id]);
         echo $input;
         echo Html::beginTag("span", ['class' => 'input-group-btn']);
         echo Html::beginTag("a", ['class' => 'btn btn-default']);
@@ -104,7 +108,7 @@ class CepInput extends InputWidget
         echo Html::beginTag('div', ['class' => 'modal-body']);
         echo Html::label('Endereço');
 
-        $input = Html::textInput(null, null, ['class' => 'form-control']);
+        $input = Html::textInput(null, null, ['class' => ArrayHelper::getValue($this->options, 'class')]);
         $this->renderSearch($input);
         $this->renderGrid();
 
@@ -156,5 +160,4 @@ class CepInput extends InputWidget
 
         $this->getView()->registerJs("jQuery('#{$id}').cep($options);");
     }
-
 } 
