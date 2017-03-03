@@ -16,9 +16,9 @@
         "issues": "https://github.com/yiibr/yii2-correios/issues?state=open",
         "source": "https://github.com/yiibr/yii2-correios"
     },
+    "minimum-stability": "dev",
     "require": {
-        "yiisoft/yii2": "dev-master",
-        "yiisoft/yii2-bootstrap": "dev-master"
+        "yiisoft/yii2": "*"
     },
     "autoload": {
         "psr-4": { "yiibr\\correios\\": "" }
