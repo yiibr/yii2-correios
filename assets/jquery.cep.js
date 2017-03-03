@@ -38,12 +38,16 @@
             if (!$.isEmptyObject(data)) {
                 this.$element.trigger($.Event('beforeAssignData'), [data]);
                 for (var prop in this.fields) {
-                    var $input = jQuery('#' + this.fields[prop]);
-                    if ($input.length) {
-                        if (prop in data) {
-                            $input.val(data[prop]);
-                        } else {
-                            $input.val('');
+                    if (jQuery.isFunction(this.fields[prop])) {
+                        this.fields[prop].apply(this,[data[prop]]);
+                    } else {
+                        var $input = jQuery('#' + this.fields[prop]);
+                        if ($input.length) {
+                            if (prop in data) {
+                                $input.val(data[prop]);
+                            } else {
+                                $input.val('');
+                            }
                         }
                     }
                 }
