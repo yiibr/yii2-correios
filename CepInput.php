@@ -96,12 +96,12 @@ class CepInput extends InputWidget
      */
     protected function renderModal()
     {
-        echo Html::beginTag('div', ['class' => 'fade modal', 'role' => 'dialog', 'tabindex' => '-1']);
+        echo Html::beginTag('div', ['class' => 'fade modal cep-modal', 'role' => 'dialog', 'tabindex' => '-1']);
         echo Html::beginTag('div', ['class' => 'modal-dialog modal-lg']);
         echo Html::beginTag('div', ['class' => 'modal-content']);
 
         echo Html::beginTag('div', ['class' => 'modal-header']);
-        echo Html::button('&times;', ['class' => 'close', 'data-dismiss' => 'modal', 'aria-hidden' => true]);
+        echo Html::button('&times;', ['class' => 'close close-modal', 'aria-hidden' => true]);
         echo "CEP";
         echo Html::endTag('div');
 
@@ -115,7 +115,7 @@ class CepInput extends InputWidget
         echo Html::endTag('div');
 
         echo Html::beginTag('div', ['class' => 'modal-footer']);
-        echo Html::button('Fechar', ['class' => 'btn btn-default', 'data-dismiss' => 'modal', 'aria-hidden' => true]);
+        echo Html::button('Fechar', ['class' => 'btn btn-default close-modal', 'aria-hidden' => true]);
         echo Html::endTag('div');
 
         echo Html::endTag('div');
