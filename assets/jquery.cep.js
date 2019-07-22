@@ -3,6 +3,10 @@
  * Released under the MIT license.
  */
 (function ($) {
+    $('.close-modal').on('click', function(){
+        $(".cep-modal").modal("hide");
+    });
+    
     var Cep = function ($element, options) {
         this.init($element, options);
     };
