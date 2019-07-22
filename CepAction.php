@@ -85,11 +85,11 @@ class CepAction extends \yii\base\Action
                     list($city, $state) = explode('/', $cols->item(2)->nodeValue);
 
                     $result[] = [
-                        'location' => $cols->item(0)->nodeValue,
-                        'district' => $cols->item(1)->nodeValue,
-                        'city' => $city,
-                        'state' => $state,
-                        'cep' => $cols->item(3)->nodeValue,
+                        'location' => trim($cols->item(0)->nodeValue),
+                        'district' => trim($cols->item(1)->nodeValue),
+                        'city' => trim($city),
+                        'state' => substr($state,0,2),
+                        'cep' => trim($cols->item(3)->nodeValue),
                     ];
                 }
             }
