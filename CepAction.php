@@ -62,6 +62,14 @@ class CepAction extends \yii\base\Action
     {
         $result = [];
         $fields = array_merge([$this->formData['tipoConsulta'] => $q], $this->formData);
+        static $pattern = '/<table class="tmptabela">(.*?)<\/table>/is',
+        $keys = [
+            'location',
+            'district',
+            'city',
+            'state',
+            'cep',
+        ];
 
         $curl = curl_init(self::URL_CORREIOS);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -71,7 +79,6 @@ class CepAction extends \yii\base\Action
         $response = curl_exec($curl);
         curl_close($curl);
 
-        static $pattern = '/<table class="tmptabela">(.*?)<\/table>/is';
         if (preg_match($pattern, $response, $matches)) {
             $html = new DOMDocument();
             if ($html->loadHTML($matches[0])) {
@@ -81,20 +88,31 @@ class CepAction extends \yii\base\Action
                 $header->parentNode->removeChild($header);
 
                 foreach ($rows as $tr) {
-                    $cols = $tr->getElementsByTagName('td');
-                    list($city, $state) = explode('/', $cols->item(2)->nodeValue);
+                    $values = preg_replace("/\r+/", "\r", trim($tr->nodeValue));
+                    $values = preg_split("/\r/", $values);
 
-                    $result[] = [
-                        'location' => trim($cols->item(0)->nodeValue),
-                        'district' => trim($cols->item(1)->nodeValue),
-                        'city' => trim($city),
-                        'state' => substr($state,0,2),
-                        'cep' => trim($cols->item(3)->nodeValue),
-                    ];
+                    array_walk($values, function (&$value, $key) {
+                        $value = trim($value, " \t\n\r\0\x0B\xC2\xA0");
+                        if ($key === 2) $value = explode('/', $value);
+                    });
+
+                    $this->flatten($values);
+
+                    $result[] = array_combine($keys, $values);
                 }
             }
         }
         return $result;
     }
 
+    private function flatten(&$array)
+    {
+        foreach ($array as $i => $items) {
+            if (gettype($items) === 'array') {
+                unset($array[$i]);
+                foreach ($items as $key => $value)
+                    array_splice($array, $i++, 0, $value);
+            }
+        }
+    }
 }
